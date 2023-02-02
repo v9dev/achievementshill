@@ -1,2 +1,5 @@
 # .gitignore
 .env
+
+# Test scripts and hidden files
+tempCodeRunnerFile.py
