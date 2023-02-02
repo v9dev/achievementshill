@@ -2,15 +2,21 @@
 from functools import wraps
 import sys
 import os
+#date and time use but at this time I can not use
 from datetime import datetime
 from flask import Flask, render_template, redirect, request, url_for, session, make_response 
 #coming from pyrebase4
 from pyrebase import initialize_app
+#the Json only use for catch Error
 import json
+#dot env Is importent
+
 from dotenv import load_dotenv
 load_dotenv()
 
 #firebase config
+
+#add config into a env file or venv File
 config = {
    "apiKey": os.environ.get('FIREBASE_API_KEY'),
   "authDomain": os.environ.get('FIREBASE_AUTH_DOMAIN'),
