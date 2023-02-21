@@ -1,7 +1,7 @@
 FROM python:3.10
 RUN pip install pipenv
-ADD . /flask-deploy
-WORKDIR /flask-deploy
+ADD . /achievementshill
+WORKDIR /achievementshill
 RUN pipenv install --system --skip-lock
 RUN pip install gunicorn[gevent]
 EXPOSE 5000
