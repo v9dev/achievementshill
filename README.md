@@ -1,12 +1,6 @@
 # achievementshill
 Achievements Hill is a full stack website that allows users to create and share their achievements. Built using Flask and Firebase.
 
-<<<<<<< HEAD
-
-=======
-<<<<<<< HEAD
-
-=======
 ## Setup
 Create a project in firebase and copy your config.
 Clone this reposistory into your computer and install all dependecies using pipenv and piplock.
@@ -45,5 +39,3 @@ FIREBASE_MEASUREMENT_ID='Measurement ID'
 ![edit profile page](https://user-images.githubusercontent.com/99959044/216849026-4670d1dc-dc16-4af9-bed8-f22cd0969453.PNG)
 
 # Thank You
->>>>>>> ec4fbd26c403d9cece4a33e949ec4c1f44ac186e
->>>>>>> 6e2f3efeb85b3dc66024b6a064d0e75f250c7ee3
