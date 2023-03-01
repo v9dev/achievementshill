@@ -69,7 +69,7 @@ def index():
   all_achivements = db.child("Achivements").get()
   if user:
     user_data = db.child("users").child(user['localId']).get()
-    profile_id=session['local']
+    profile_id=user['localId']
     if user_data.val() is not None:
       user_data = user_data.val()
       if user_data.get('profile_filled'):
@@ -174,11 +174,16 @@ def create():
       'link':link,
       "author": session["email"]
     }
-    title = title.replace(" ", "_")
+    title = title.replace(" ", "-")
     try:
       db.child("Achivements").child(title).set(achivement , user['idToken'] )
       return redirect("/")
-    except:
+    except Exception as e:
+      error_json = e.args[1]
+      print(error)
+      error = json.loads(error_json)['error']['message']
+      error = error.replace('_', ' ')
+      error=('{}'.format(error))
       return render_template("create.html", message= "Something wrong happened")  
 
   return render_template("create.html")
@@ -201,27 +206,41 @@ def edit(id):
     user=auth.current_user
     local_id=user['localId']
     if request.method == "POST":
-    #get the request data
-      title = request.form["a_title"]
-      date = request.form["a_date"]
-      link = request.form["a_link"]
-      profile_pic_url = storage.child("profile_pic/" + local_id).get_url(None)
-      user_title=db.child("users").child(user['localId']).child('title').get()
-      user_name=db.child("users").child(user['localId']).child('name').get()
-      user_title=user_title.val()
-      name=user_name.val()
-      achivement = {
-      'name':name,
-      'profile_pic':profile_pic_url,
-      'user_title':user_title,
-      'title':title,
-      'date':date,
-      'link':link,
-      "author": session["email"],
-      }
-      #update the post
-      db.child("Achivements").child(id).update(achivement , user['idToken'])
-      return redirect("/achivement/" + id) 
+      try:
+      #get the request data
+        title= request.form["a_title"]
+        new_title = request.form["new_title"]
+        date = request.form["a_date"]
+        link = request.form["a_link"]
+        profile_pic_url = storage.child("profile_pic/" + local_id).get_url(None)
+        user_title=db.child("users").child(user['localId']).child('title').get()
+        user_name=db.child("users").child(user['localId']).child('name').get()
+        user_title=user_title.val()
+        name=user_name.val()
+        achivement = {
+        'name':name,
+        'profile_pic':profile_pic_url,
+        'user_title':user_title,
+        'title':new_title,
+        'date':date,
+        'link':link,
+        "author": session["email"],
+        }
+        #update the post
+        new_title = new_title.replace(" ", "-")
+        if new_title:
+          db.child("Achivements").child(id).remove(user['idToken'])
+          db.child("Achivements").child(new_title).update(achivement, user['idToken'])
+          return redirect("/achivement/" + new_title)
+        else:
+           db.child("Achivements").child(title).update(achivement, user['idToken'])
+        return redirect("/achivement/" + id) 
+      except Exception as e:
+          error_json = e.args[1]
+          error = json.loads(error_json)['error']['message']
+          error = error.replace('_', ' ')
+          error=('{}'.format(error))
+          return render_template("edit.html" + id , error=error) 
     orderedDict =  db.child("Achivements").order_by_key().equal_to(id).limit_to_first(1).get()
     return render_template("edit.html", data=orderedDict)
   
@@ -322,4 +341,4 @@ def logout():
 
 #run the main script
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True,host='0.0.0.0')
