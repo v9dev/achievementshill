@@ -29,14 +29,15 @@
                     <div class="d-flex gap-2 pt-4">
                         {% if session["usr"] %}
                         {% if session["email"] == a.val().author %}
-                        <a type="button" href="/edit/{{a.key()}}" class="btn btn-primary btn-sm w-50"><i
-                            class="bi bi-pencil-square"></i> Edit</a>
+                        <a type="button" href="/edit/{{a.key()}}" class="btn btn-primary w-50"><i
+                                class="bi bi-pencil-square"></i> Edit</a>
                         {% endif %}
                         {% endif %}
                         {% if session["usr"] %}
                         {% if session["email"] == a.val().author %}
                         <form method="POST" action="/delete/{{a.key()}}">
-                            <button type="submit" class="btn btn-danger" value="delete">Delete</button>
+                            <button type="submit" class="btn btn-danger" value="delete">
+                                <i class="bi bi-trash"></i> Delete</button>
                         </form>
                         {%endif%}
                         {%endif%}
