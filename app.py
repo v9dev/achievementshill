@@ -2,6 +2,9 @@
 from functools import wraps
 import sys
 import os
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 #date and time use but at this time I can not use
 from datetime import datetime
 from flask import Flask, render_template, redirect, request, url_for, session, make_response 
@@ -13,6 +16,7 @@ import json
 
 from dotenv import load_dotenv
 load_dotenv()
+
 
 #firebase config
 
@@ -27,6 +31,7 @@ config = {
   "appId": os.environ.get('FIREBASE_APP_ID'),
   "measurementId": os.environ.get('FIREBASE_MEASUREMENT_ID')
 }
+
 
 
 #Firebase Initization
@@ -157,7 +162,7 @@ def create():
   local_id=user['localId']
   if request.method == "POST":
     #get the request data
-    profile_pic_url = storage.child("profile_pic/" + local_id).get_url(None)
+    profile_pic_url = db.child("users").child(local_id).child("profile_pic").get().val() #db.child("profile_pic/" + local_id).get_url(None) # Enable If You want use firebase Storage and comment above value
     user_title=db.child("users").child(user['localId']).child('title').get()
     user_name=db.child("users").child(user['localId']).child('name').get()
     user_title=user_title.val()
@@ -253,41 +258,52 @@ def delete(id):
   return redirect("/")
         
 
-#Create a page for user to edit profile
+
 @app.route("/edit_profile/<id>", methods=["GET", "POST"])
 @isAuthenticated
 def edit_profile(id):
-  user = auth.current_user
-  local_id=user['localId']
-  if request.method == "POST":
-    profile_pic = request.files["profile_pic"]
-    website = request.form["website"]
-    github = request.form["github"]
-    twitter= request.form["twitter"]
-    linedin = request.form["linedin"]
-    name = request.form["name"]
-    title = request.form["title"]
-    age = request.form["age"]
-    if profile_pic:
-      storage.child("profile_pic/" + local_id).put(profile_pic , user['idToken'])
-      profile_pic_url = storage.child("profile_pic/" + local_id).get_url(None)
-    profile_pic_url = storage.child("profile_pic/" + local_id).get_url(None)
+    user = auth.current_user
+    local_id = user['localId']
+    
+    if request.method == "POST":
+        profile_pic = request.files.get("profile_pic")  # Use .get() to avoid KeyError
+        website = request.form.get("website", "")
+        github = request.form.get("github", "")
+        twitter = request.form.get("twitter", "")
+        linedin = request.form.get("linedin", "")
+        name = request.form.get("name", "")
+        title = request.form.get("title", "")
+        age = request.form.get("age", "")
 
-    data = {
-    "profile_filled": True,
-    "profile_pic":profile_pic_url,
-    "website":website,
-    "github":github,
-    "twitter":twitter,
-    "linedin":linedin,
-    "name": name,
-    "title":title,
-    "age": age
-    }
-    db.child("users").child(id).update(data , user['idToken'])
-    return redirect("/profile/" + id)
-  orderedDict =  db.child("users").order_by_key().equal_to(id).limit_to_first(1).get()
-  return render_template("edit_profile.html", data=orderedDict)
+        profile_pic_url = db.child("users").child(id).child("profile_pic").get().val()  # Default to stored value
+
+        if profile_pic:
+            upload_result = cloudinary.uploader.upload(profile_pic)
+            profile_pic_url = upload_result["secure_url"]
+            
+            #Enable If You Want Use Firebase Storage and comment abve 4 lines
+            # if profile_pic:
+            #   storage.child("profile_pic/" + local_id).put(profile_pic , user['idToken'])
+            #   profile_pic_url = storage.child("profile_pic/" + local_id).get_url(None)
+            # profile_pic_url = storage.child("profile_pic/" + local_id).get_url(None)
+
+        data = {
+            "profile_filled": True,
+            "profile_pic": profile_pic_url,
+            "website": website,
+            "github": github,
+            "twitter": twitter,
+            "linedin": linedin,
+            "name": name,
+            "title": title,
+            "age": age
+        }
+        
+        db.child("users").child(id).update(data, user['idToken'])
+        return redirect("/profile/" + id)
+
+    orderedDict = db.child("users").order_by_key().equal_to(id).limit_to_first(1).get()
+    return render_template("edit_profile.html", data=orderedDict)
 
 
 

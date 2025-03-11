@@ -48,7 +48,7 @@
                                     class="form-control" value="{{a.val().title}}" name="a_title" /> </p>
                             <p class="text-muted mb-0"><i class="bi bi-award-fill"></i> <input type="text"
                                     class="form-control" value="{{a.val().title}}" name="new_title" /> </p>
-                            <p class="text-muted mb-0 mt-2"><i class="bi bi-calendar3"></i> <input type="text"
+                            <p class="text-muted mb-0 mt-2"><i class="bi bi-calendar3"></i> <input type="date"
                                     class="form-control" value="{{a.val().date}}" name="a_date" /></p>
                             <p class="text-muted mb-0 mt-2"><i class="bi bi-trophy-fill"></i><input type="text"
                                     class="form-control" value="{{a.val().link}}" name="a_link" /></p>
@@ -58,7 +58,7 @@
                         <div class="d-flex gap-2 pt-4">
                             {% if session["usr"] %}
                             {% if session["email"] == a.val().author %}
-                            <button type="submit" value="Update" class="btn btn-primary btn-sm w-50"> Update</button>
+                            <button type="submit" value="Update" class="btn btn-primary  w-50"> Update</button>
                             {% endif %}
                             {% endif %}
                         </div>

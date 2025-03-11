@@ -1,5 +1,39 @@
-# .gitignore
+# Virtual environment
+venv/
 .env
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 
-# Test scripts and hidden files
-tempCodeRunnerFile.py
+# IDE and editor files
+.vscode/
+*.swp
+*.swo
+*.swn
+*.sublime-project
+*.sublime-workspace
+
+# Logs & Debug files
+*.log
+debug.log
+
+# Pipenv & Python dependencies
+Pipfile
+Pipfile.lock
+
+# Database files
+*.sqlite3
+*.db
+
+# Cloudinary & Firebase credentials
+.cloudinary.env
+firebase.json
+
+# Compiled Python files
+*.egg-info/
+*.dist-info/
+
+# MacOS system files
+.DS_Store
